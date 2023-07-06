@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"fmt"
+	"rakamin-final/internal/helper"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -39,8 +40,17 @@ func InitDB(v *viper.Viper) *gorm.DB {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		panic(err)
+		helper.Logger("internal/infrastructure/mysql/index.go", helper.LoggerLevelPanic, fmt.Sprintf("Error when connect to database : %s", err.Error()))
 	}
+
+	_, err = db.DB()
+	if err != nil {
+		helper.Logger("internal/infrastructure/mysql/index.go", helper.LoggerLevelPanic, fmt.Sprintf("Error when connect to database : %s", err.Error()))
+	}
+
+	helper.Logger("internal/infrastructure/mysql/index.go", helper.LoggerLevelInfo, "Succeed when connect to database")
+	RunMigration(db)
+
 	return db
 
 }
