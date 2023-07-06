@@ -21,4 +21,5 @@ func RouteUserAccount(r fiber.Router, containerConf *container.Container) {
 	userApi.Post("/login", controller.LoginUser)
 	userApi.Put("/edit", controller.UpdateUser)
 	userApi.Delete("/delete", controller.DeleteUser)
+	userApi.Get("/logout", controller.LogoutUser)
 }

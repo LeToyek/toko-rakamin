@@ -26,8 +26,8 @@ type (
 	}
 
 	FilterUser struct {
-		ID              int64
-		Limit, Offset   int
-		Email, Password string
+		ID            int64
+		Limit, Offset int
+		Email         string
 	}
 )

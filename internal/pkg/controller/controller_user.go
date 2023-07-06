@@ -13,6 +13,7 @@ type UsersController interface {
 	GetUsers(ctx *fiber.Ctx) error
 	UpdateUser(ctx *fiber.Ctx) error
 	DeleteUser(ctx *fiber.Ctx) error
+	LogoutUser(ctx *fiber.Ctx) error
 }
 
 type usersControllerImpl struct {
@@ -63,7 +64,7 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 		})
 	}
 
-	res, err := u.usecase.GetUserByParam(c, userDTO.UserFilter{
+	res, err, token := u.usecase.GetCredentialUserLogin(c, userDTO.UserLogin{
 		Email:    user.Email,
 		Password: user.Password,
 	})
@@ -73,6 +74,16 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 			"message": err.Message.Error(),
 		})
 	}
+
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    token,
+		HTTPOnly: true,
+		Secure:   true,
+		Domain:   "localhost",
+		Path:     "/",
+		MaxAge:   86400,
+	})
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "success",
@@ -156,5 +167,14 @@ func (u *usersControllerImpl) DeleteUser(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Data has been deleted",
+	})
+}
+
+func (u *usersControllerImpl) LogoutUser(ctx *fiber.Ctx) error {
+
+	ctx.ClearCookie("token")
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Logout success",
 	})
 }

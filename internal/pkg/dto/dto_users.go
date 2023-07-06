@@ -19,15 +19,15 @@ type UserResponse struct {
 }
 
 type UserLogin struct {
-	Email    string `json:"email"`
+	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password"`
 }
 
 type UserRegister struct {
-	Email        string `json:"email"`
-	Password     string `json:"password"`
-	Nama         string `json:"nama"`
-	NoTelp       string `json:"no_telp"`
+	Email        string `json:"email" validate:"required,email"`
+	Password     string `json:"password" validate:"required,min=6"`
+	Nama         string `json:"nama" validate:"required,min=3,max=255"`
+	NoTelp       string `json:"no_telp" validate:"required,min=10"`
 	JenisKelamin string `json:"jenis_kelamin"`
 	Tentang      string `json:"tentang"`
 	Pekerjaan    string `json:"pekerjaan"`
