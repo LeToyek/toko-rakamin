@@ -24,4 +24,10 @@ type (
 		Created_at   time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
 		Alamats      []Alamat  `gorm:"foreignKey:IdUser"`
 	}
+
+	FilterUser struct {
+		ID              int64
+		Limit, Offset   int
+		Email, Password string
+	}
 )

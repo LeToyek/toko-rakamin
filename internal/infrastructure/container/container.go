@@ -21,12 +21,13 @@ type (
 		Apps    *Apps
 	}
 	Apps struct {
-		Name      string `mapstructure:"name"`
-		Host      string `mapstructure:"host"`
-		Version   string `mapstructure:"version"`
-		Address   string `mapstructure:"address"`
-		HttpPort  string `mapstructure:"httpport"`
-		SecretJwt string `mapstructure:"secretjwt"`
+		Name     string `mapstructure:"name"`
+		Host     string `mapstructure:"host"`
+		Version  string `mapstructure:"version"`
+		Address  string `mapstructure:"address"`
+		HttpPort string `mapstructure:"httpport"`
+
+		JwtSecret string `mapstructure:"jwt_secret"`
 	}
 )
 
