@@ -13,4 +13,6 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 
 	route.RouteStore(api, containerConf)
 	route.RouteUserAccount(api, containerConf)
+	route.RouteProduct(api, containerConf)
+	route.RouteAddress(api, containerConf)
 }

@@ -19,4 +19,10 @@ type (
 		UpdatedAt    time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
 		CreatedAt    time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
 	}
+
+	FilterAlamat struct {
+		ID            int64
+		Limit, Offset int
+		JudulAlamat   string
+	}
 )
