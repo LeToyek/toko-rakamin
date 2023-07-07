@@ -20,8 +20,8 @@ type (
 		IdProvinsi   string `gorm:"size:255"`
 		IdKota       string `gorm:"size:255"`
 		IsAdmin      bool
-		Updated_at   time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
-		Created_at   time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
+		Updated_at   time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
+		Created_at   time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
 		Alamats      []Alamat  `gorm:"foreignKey:IdUser"`
 	}
 

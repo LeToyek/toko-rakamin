@@ -14,8 +14,8 @@ type (
 		HargaReseller string    `gorm:"size:255"`
 		HargaKonsumen string    `gorm:"size:255"`
 		Deskripsi     string    `gorm:"type:text"`
-		CreatedAt     time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
-		UpdatedAt     time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
+		CreatedAt     time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
+		UpdatedAt     time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
 		IdToko        int64
 		Toko          Toko `gorm:"foreignKey:IdToko"`
 		CategoryID    int64

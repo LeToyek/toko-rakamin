@@ -14,10 +14,15 @@ type (
 		User       User        `gorm:"foreignKey:IdUser"`
 		NamaToko   string      `gorm:"size:255"`
 		UrlFoto    string      `gorm:"size:255"`
-		UpdatedAt  time.Time   `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
-		CreatedAt  time.Time   `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
+		UpdatedAt  time.Time   `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
+		CreatedAt  time.Time   `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
 		Produks    []Produk    `gorm:"foreignKey:IdToko"`
 		LogProduks []LogProduk `gorm:"foreignKey:IdToko"`
 		DetailTrxs []DetailTrx `gorm:"foreignKey:IdToko"`
+	}
+	FilterToko struct {
+		ID            int64
+		Limit, Offset int
+		NamaToko      string
 	}
 )

@@ -13,6 +13,6 @@ type DetailTrx struct {
 	IdToko      int64
 	Kuantitas   int
 	HargaTotal  int
-	UpdatedAt   time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
-	CreatedAt   time.Time `gorm:"type:date;default:CURRENT_TIMESTAMP()"`
+	UpdatedAt   time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
+	CreatedAt   time.Time `gorm:"type:TIMESTAMP;default:CURRENT_TIMESTAMP()"`
 }
