@@ -77,13 +77,9 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Cookie(&fiber.Cookie{
-		Name:     "token",
-		Value:    token,
-		HTTPOnly: true,
-		Secure:   true,
-		Domain:   "localhost",
-		Path:     "/",
-		MaxAge:   86400,
+		Name:   "token",
+		Value:  token,
+		MaxAge: 86400,
 	})
 
 	ctx.Response().Header.VisitAllCookie(func(key, value []byte) {
@@ -93,7 +89,6 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "success",
 		"data":    res,
-		"token":   token,
 	})
 
 }
