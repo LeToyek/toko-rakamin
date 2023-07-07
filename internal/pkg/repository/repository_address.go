@@ -40,13 +40,20 @@ func (r *addressRepositoryImpl) GetAllAddress(ctx context.Context, params daos.F
 		value := structValue.Field(i)
 
 		if value.Interface() != reflect.Zero(field.Type).Interface() {
-			whereConditions = append(whereConditions, fmt.Sprintf("%v like ?", field.Name))
-			whereValues = append(whereValues, value.Interface())
+			if field.Name != "Limit" && field.Name != "Offset" {
+				whereConditions = append(whereConditions, fmt.Sprintf("%v like ?", field.Name))
+				whereValues = append(whereValues, value.Interface())
+			}
 		}
 	}
 	if len(whereConditions) > 0 {
 		query := strings.Join(whereConditions, " OR ")
 		err := db.Where(query, whereValues...).WithContext(ctx).Find(&res).Error
+		if err != nil {
+			return res, err
+		}
+	} else {
+		err := db.Find(&res).Error
 		if err != nil {
 			return res, err
 		}

@@ -19,11 +19,10 @@ type ProductResponse struct {
 	Deskripsi     string `json:"deskripsi" validate:"required,min=3"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-	// IdToko        int64
-	// Toko          Toko
-	// CategoryID    int64
-	// Category      Category     `json:"foreignKey:CategoryID"`
-	// FotoProduks   []FotoProduk `json:"foreignKey:IdProduk"`
+
+	// Toko        StoreResponse
+	// Category    Category     `json:"foreignKey:CategoryID"`
+	// FotoProduks []FotoProduk `json:"foreignKey:IdProduk"`
 }
 
 type ProductRequest struct {

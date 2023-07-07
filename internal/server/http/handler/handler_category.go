@@ -16,10 +16,10 @@ func RouteCategory(r fiber.Router, container *container.Container) {
 	usecase := usecase.NewCategoryUsecase(repo)
 	controller := controller.NewCategoryController(usecase)
 
-	r.Group("/category")
-	r.Get("/", middleware.DeserializeUser, controller.GetAllCategories)
-	r.Get("/:id", middleware.DeserializeUser, controller.GetCategoryByID)
-	r.Post("/", middleware.DeserializeUser, controller.CreateCategory)
-	r.Put("/:id", middleware.DeserializeUser, controller.UpdateCategory)
-	r.Delete("/:id", middleware.DeserializeUser, controller.DeleteCategory)
+	categoryApi := r.Group("/category")
+	categoryApi.Get("/", middleware.DeserializeUser, controller.GetAllCategories)
+	categoryApi.Get("/:id", middleware.DeserializeUser, controller.GetCategoryByID)
+	categoryApi.Post("/", middleware.DeserializeUser, controller.CreateCategory)
+	categoryApi.Put("/:id", middleware.DeserializeUser, controller.UpdateCategory)
+	categoryApi.Delete("/:id", middleware.DeserializeUser, controller.DeleteCategory)
 }

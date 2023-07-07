@@ -15,11 +15,11 @@ func RouteTrx(r fiber.Router, container *container.Container) {
 	usecase := usecase.NewTrxUsecase(repo)
 	controller := controller.NewTrxController(usecase)
 
-	r.Group("/trx")
-	r.Get("/", controller.GetAllTrxes)
-	r.Get("/:id", controller.GetTrxByID)
-	r.Post("/", controller.CreateTrx)
-	r.Put("/:id", controller.UpdateTrx)
-	r.Delete("/:id", controller.DeleteTrx)
+	trxApi := r.Group("/trx")
+	trxApi.Get("/", controller.GetAllTrxes)
+	trxApi.Get("/:id", controller.GetTrxByID)
+	trxApi.Post("/", controller.CreateTrx)
+	trxApi.Put("/:id", controller.UpdateTrx)
+	trxApi.Delete("/:id", controller.DeleteTrx)
 
 }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
 	"strconv"
@@ -58,9 +59,12 @@ func (u *storeControllerImpl) GetAllStores(ctx *fiber.Ctx) error {
 
 	res, err := u.usecase.GetAllStores(c, dto.StoreFilter{})
 
+	fmt.Println(`workk`)
 	if err != nil {
+		fmt.Println(err)
 		return ctx.Status(err.Code).JSON(fiber.Map{
-			"message": err.Message.Error(),
+			"location": "controller.GetAllStores",
+			"message":  err.Message.Error(),
 		})
 	}
 
