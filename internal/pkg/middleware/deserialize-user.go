@@ -19,8 +19,6 @@ func DeserializeUser(c *fiber.Ctx) error {
 	} else if c.Cookies("token") != "" {
 		tokenString = c.Cookies("token")
 	}
-	fmt.Print("tokenString: ", c.Cookies("token"))
-	fmt.Println(tokenString)
 
 	if tokenString == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{

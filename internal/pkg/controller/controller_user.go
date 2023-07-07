@@ -4,6 +4,7 @@ import (
 	"fmt"
 	userDTO "rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -77,9 +78,9 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Cookie(&fiber.Cookie{
-		Name:   "token",
-		Value:  token,
-		MaxAge: 86400,
+		Name:    "token",
+		Value:   token,
+		Expires: time.Now().Add(time.Minute * 5),
 	})
 
 	ctx.Response().Header.VisitAllCookie(func(key, value []byte) {
@@ -173,9 +174,16 @@ func (u *usersControllerImpl) DeleteUser(ctx *fiber.Ctx) error {
 
 func (u *usersControllerImpl) LogoutUser(ctx *fiber.Ctx) error {
 
+	ctx.Cookie(&fiber.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now().Add(-3 * time.Second),
+	})
+
 	ctx.ClearCookie("token")
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Logout success",
+		"cookie":  ctx.Cookies("token"),
 	})
 }
