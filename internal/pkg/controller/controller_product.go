@@ -94,7 +94,7 @@ func (u *productControllerImpl) UpdateProduct(ctx *fiber.Ctx) error {
 
 	id, _ := strconv.Atoi(ctx.Params("id"))
 
-	var product dto.ProductRequest
+	var product dto.ProductRequestUpdate
 
 	if err := ctx.BodyParser(&product); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -113,7 +113,6 @@ func (u *productControllerImpl) UpdateProduct(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "success",
 		"data":    res,
-		"product": product,
 	})
 }
 

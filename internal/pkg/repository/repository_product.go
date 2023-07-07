@@ -27,7 +27,7 @@ func NewProductRepository(db *gorm.DB) *productRepositoryImpl {
 }
 
 func (r *productRepositoryImpl) GetAllProducts(ctx context.Context, params daos.FilterProduk) (res []daos.Produk, err error) {
-	db := r.db
+	db := r.db.Joins("JOIN categories c ON produks.category_id = c.id").Joins("JOIN tokos t ON produks.id_toko = t.id").Select("produks.*, c.*, t.*")
 	structType := reflect.TypeOf(params)
 	structValue := reflect.ValueOf(params)
 
@@ -57,15 +57,19 @@ func (r *productRepositoryImpl) GetAllProducts(ctx context.Context, params daos.
 			return res, err
 		}
 	}
+	fmt.Println(res)
 	return res, nil
 }
 
 func (r *productRepositoryImpl) GetProductByID(ctx context.Context, id int64) (res daos.Produk, err error) {
-	if err := r.db.Where(&daos.Produk{
-		ID: id,
-	}).WithContext(ctx).First(&res).Error; err != nil {
+	err = r.db.Preload("Toko").Preload("Category").Where("id = ?", id).WithContext(ctx).Find(&res).Error
+
+	if err != nil {
 		return res, err
 	}
+
+	fmt.Println(res.Toko.NamaToko)
+
 	return res, nil
 }
 

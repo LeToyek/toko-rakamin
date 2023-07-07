@@ -19,7 +19,7 @@ func RouteCategory(r fiber.Router, container *container.Container) {
 	categoryApi := r.Group("/category")
 	categoryApi.Get("/", middleware.DeserializeUser, controller.GetAllCategories)
 	categoryApi.Get("/:id", middleware.DeserializeUser, controller.GetCategoryByID)
-	categoryApi.Post("/", middleware.DeserializeUser, controller.CreateCategory)
-	categoryApi.Put("/:id", middleware.DeserializeUser, controller.UpdateCategory)
-	categoryApi.Delete("/:id", middleware.DeserializeUser, controller.DeleteCategory)
+	categoryApi.Post("/create", middleware.DeserializeUser, controller.CreateCategory)
+	categoryApi.Put("/edit/:id", middleware.DeserializeUser, controller.UpdateCategory)
+	categoryApi.Delete("/delete/:id", middleware.DeserializeUser, controller.DeleteCategory)
 }
