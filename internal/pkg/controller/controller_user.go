@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	userDTO "rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
 
@@ -85,9 +86,14 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 		MaxAge:   86400,
 	})
 
+	ctx.Response().Header.VisitAllCookie(func(key, value []byte) {
+		fmt.Println("res cookieKey", string(key), "value", string(value))
+	})
+
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "success",
 		"data":    res,
+		"token":   token,
 	})
 
 }
