@@ -20,8 +20,8 @@ type ProductResponse struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 
-	// Toko        StoreResponse
-	// Category    Category     `json:"foreignKey:CategoryID"`
+	Toko     StoreResponse
+	Category CategoryResponse
 	// FotoProduks []FotoProduk `json:"foreignKey:IdProduk"`
 }
 

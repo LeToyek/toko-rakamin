@@ -80,7 +80,7 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 	ctx.Cookie(&fiber.Cookie{
 		Name:    "token",
 		Value:   token,
-		Expires: time.Now().Add(time.Minute * 5),
+		Expires: time.Now().Add(time.Minute * 60),
 	})
 
 	ctx.Response().Header.VisitAllCookie(func(key, value []byte) {

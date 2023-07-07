@@ -59,6 +59,19 @@ func (u *productUsecaseImpl) GetAllProducts(ctx context.Context, params ProductD
 			HargaKonsumen: v.HargaKonsumen,
 			Stok:          v.Stok,
 			Deskripsi:     v.Deskripsi,
+			Toko: ProductDTO.StoreResponse{
+				NamaToko:  v.Toko.NamaToko,
+				UrlFoto:   v.Toko.UrlFoto,
+				ID:        v.Toko.ID,
+				CreatedAt: v.Toko.CreatedAt,
+				UpdatedAt: v.Toko.UpdatedAt,
+			},
+			Category: ProductDTO.CategoryResponse{
+				ID:        v.Category.ID,
+				Nama:      v.Category.NamaCategory,
+				CreatedAt: v.Category.CreatedAt,
+				UpdatedAt: v.Category.UpdatedAt,
+			},
 		})
 	}
 
@@ -82,6 +95,19 @@ func (u *productUsecaseImpl) GetProductByID(ctx context.Context, id int64) (res 
 		HargaKonsumen: resRepo.HargaKonsumen,
 		Stok:          resRepo.Stok,
 		Deskripsi:     resRepo.Deskripsi,
+		Toko: ProductDTO.StoreResponse{
+			NamaToko:  resRepo.Toko.NamaToko,
+			UrlFoto:   resRepo.Toko.UrlFoto,
+			ID:        resRepo.Toko.ID,
+			CreatedAt: resRepo.Toko.CreatedAt,
+			UpdatedAt: resRepo.Toko.UpdatedAt,
+		},
+		Category: ProductDTO.CategoryResponse{
+			ID:        resRepo.Category.ID,
+			Nama:      resRepo.Category.NamaCategory,
+			CreatedAt: resRepo.Category.CreatedAt,
+			UpdatedAt: resRepo.Category.UpdatedAt,
+		},
 	}
 
 	return res, nil

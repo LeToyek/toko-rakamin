@@ -27,7 +27,7 @@ func NewProductRepository(db *gorm.DB) *productRepositoryImpl {
 }
 
 func (r *productRepositoryImpl) GetAllProducts(ctx context.Context, params daos.FilterProduk) (res []daos.Produk, err error) {
-	db := r.db.Joins("JOIN categories c ON produks.category_id = c.id").Joins("JOIN tokos t ON produks.id_toko = t.id").Select("produks.*, c.*, t.*")
+	db := r.db.Preload("Toko").Preload("Category").Limit(params.Limit).Offset(params.Offset)
 	structType := reflect.TypeOf(params)
 	structValue := reflect.ValueOf(params)
 
