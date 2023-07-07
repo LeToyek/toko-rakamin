@@ -66,7 +66,19 @@ func (r *userRepositoryImpl) GetUserByID(ctx context.Context, id int64) (res dao
 }
 
 func (r *userRepositoryImpl) CreateUser(ctx context.Context, user daos.User) (res daos.User, err error) {
-	if err := r.db.Create(&user).WithContext(ctx).Error; err != nil {
+	err = r.db.Transaction(
+		func(tx *gorm.DB) error {
+			if err := tx.Create(&user).WithContext(ctx).Error; err != nil {
+				return err
+			}
+			if err := tx.Create(&daos.Toko{
+				User: user,
+			}).WithContext(ctx).Error; err != nil {
+				return err
+			}
+			return nil
+		})
+	if err != nil {
 		return res, err
 	}
 	helper.Logger("internal/pkg/repository/repository_users.go", helper.LoggerLevelInfo, fmt.Sprintf("user created, id: %v", user))
