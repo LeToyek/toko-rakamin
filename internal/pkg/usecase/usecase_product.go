@@ -50,7 +50,13 @@ func (u *productUsecaseImpl) GetAllProducts(ctx context.Context, params ProductD
 			Message: errRepo,
 		}
 	}
-	for _, v := range resRepo {
+	for i, v := range resRepo {
+		var productPhotos []ProductDTO.ProductResponseForProduct
+		for _, x := range resRepo[i].FotoProduks {
+			productPhotos = append(productPhotos, ProductDTO.ProductResponseForProduct{
+				ID:  x.ID,
+				Url: x.Url})
+		}
 		res = append(res, ProductDTO.ProductResponse{
 			ID:            v.ID,
 			NamaProduk:    v.NamaProduk,
@@ -72,7 +78,8 @@ func (u *productUsecaseImpl) GetAllProducts(ctx context.Context, params ProductD
 				CreatedAt: v.Category.CreatedAt,
 				UpdatedAt: v.Category.UpdatedAt,
 			},
-		})
+			FotoProduks: productPhotos})
+
 	}
 
 	return res, nil
@@ -86,6 +93,13 @@ func (u *productUsecaseImpl) GetProductByID(ctx context.Context, id int64) (res 
 			Code:    500,
 			Message: errRepo,
 		}
+	}
+	var productPhotos []ProductDTO.ProductResponseForProduct
+	for _, v := range resRepo.FotoProduks {
+		productPhotos = append(productPhotos, ProductDTO.ProductResponseForProduct{
+			ID:  v.ID,
+			Url: v.Url,
+		})
 	}
 	res = ProductDTO.ProductResponse{
 		ID:            resRepo.ID,
@@ -108,6 +122,7 @@ func (u *productUsecaseImpl) GetProductByID(ctx context.Context, id int64) (res 
 			CreatedAt: resRepo.Category.CreatedAt,
 			UpdatedAt: resRepo.Category.UpdatedAt,
 		},
+		FotoProduks: productPhotos,
 	}
 
 	return res, nil

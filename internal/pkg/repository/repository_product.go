@@ -27,7 +27,7 @@ func NewProductRepository(db *gorm.DB) *productRepositoryImpl {
 }
 
 func (r *productRepositoryImpl) GetAllProducts(ctx context.Context, params daos.FilterProduk) (res []daos.Produk, err error) {
-	db := r.db.Preload("Toko").Preload("Category").Limit(params.Limit).Offset(params.Offset)
+	db := r.db.Preload("Toko").Preload("Category").Preload("FotoProduks").Limit(params.Limit).Offset(params.Offset)
 	structType := reflect.TypeOf(params)
 	structValue := reflect.ValueOf(params)
 
@@ -62,7 +62,7 @@ func (r *productRepositoryImpl) GetAllProducts(ctx context.Context, params daos.
 }
 
 func (r *productRepositoryImpl) GetProductByID(ctx context.Context, id int64) (res daos.Produk, err error) {
-	err = r.db.Preload("Toko").Preload("Category").Where("id = ?", id).WithContext(ctx).Find(&res).Error
+	err = r.db.Preload("Toko").Preload("Category").Preload("FotoProduks").Where("id = ?", id).WithContext(ctx).Find(&res).Error
 
 	if err != nil {
 		return res, err

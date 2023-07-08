@@ -19,10 +19,9 @@ type ProductResponse struct {
 	Deskripsi     string `json:"deskripsi" validate:"required,min=3"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-
-	Toko     StoreResponse
-	Category CategoryResponse
-	// FotoProduks []FotoProduk `json:"foreignKey:IdProduk"`
+	Toko          StoreResponse
+	Category      CategoryResponse
+	FotoProduks   []ProductResponseForProduct `json:"foto_produk"`
 }
 
 type ProductRequest struct {
@@ -33,10 +32,6 @@ type ProductRequest struct {
 	Deskripsi     string `json:"deskripsi" validate:"required,min=3"`
 	TokoID        int64  `json:"toko_id" validate:"required"`
 	CategoryID    int64  `json:"category_id" validate:"required"`
-
-	// Toko          Toko
-	// Category      Category     `json:"foreignKey:CategoryID"`
-	// FotoProduks   []FotoProduk `json:"foreignKey:IdProduk"`
 }
 
 type ProductRequestUpdate struct {
@@ -47,4 +42,13 @@ type ProductRequestUpdate struct {
 	Deskripsi     string `json:"deskripsi" validate:"omitempty,min=3"`
 	TokoID        int64  `json:"toko_id"`
 	CategoryID    int64  `json:"category_id"`
+}
+
+type ProductResponseForPhoto struct {
+	ID            int64  `json:"id"`
+	NamaProduk    string `json:"nama_produk" validate:"required,min=3,max=255"`
+	HargaReseller string `json:"harga_reseller"`
+	HargaKonsumen string `json:"harga_konsumen"`
+	Stok          int    `json:"stok"`
+	Deskripsi     string `json:"deskripsi" validate:"required,min=3"`
 }
