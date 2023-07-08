@@ -18,8 +18,8 @@ func RouteTrx(r fiber.Router, container *container.Container) {
 	trxApi := r.Group("/trx")
 	trxApi.Get("/", controller.GetAllTrxes)
 	trxApi.Get("/:id", controller.GetTrxByID)
-	trxApi.Post("/", controller.CreateTrx)
-	trxApi.Put("/:id", controller.UpdateTrx)
-	trxApi.Delete("/:id", controller.DeleteTrx)
+	trxApi.Post("/create", controller.CreateTrx)
+	trxApi.Put("/edit/:id", controller.UpdateTrx)
+	trxApi.Delete("/delete/:id", controller.DeleteTrx)
 
 }
