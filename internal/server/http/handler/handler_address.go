@@ -18,7 +18,7 @@ func RouteAddress(r fiber.Router, container *container.Container) {
 	usecase := usecase.NewAddressUsecase(repo)
 	controller := controller.NewAddressController(usecase)
 
-	addressApi.Delete("/:id", middleware.DeserializeUser, controller.DeleteAddress)
+	addressApi.Delete("/delete/:id", middleware.DeserializeUser, controller.DeleteAddress)
 	addressApi.Post("/create", middleware.DeserializeUser, controller.CreateAddress)
 	addressApi.Get("/:id", middleware.DeserializeUser, controller.GetAddress)
 	addressApi.Put("/edit/:id", middleware.DeserializeUser, controller.UpdateAddress)

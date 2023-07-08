@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
 	"strconv"
@@ -46,7 +47,7 @@ func (u *addressControllerImpl) CreateAddress(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "success",
-		"data":    res,
+		"id":      res.ID,
 		"address": address,
 	})
 
@@ -84,7 +85,7 @@ func (u *addressControllerImpl) UpdateAddress(ctx *fiber.Ctx) error {
 		})
 	}
 
-	res, errUC := u.usecase.UpdateAddress(c, int64(id), dto.AddressRequest{
+	_, errUC := u.usecase.UpdateAddress(c, int64(id), dto.AddressRequest{
 		JudulAlamat:  address.JudulAlamat,
 		NamaPenerima: address.NamaPenerima,
 		NoTelp:       address.NoTelp,
@@ -99,7 +100,6 @@ func (u *addressControllerImpl) UpdateAddress(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "success",
-		"data":    res,
 		"address": address,
 	})
 }
@@ -118,6 +118,6 @@ func (u *addressControllerImpl) DeleteAddress(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "success",
+		"message": fmt.Sprintf("success delete address with id %d", id),
 	})
 }

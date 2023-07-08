@@ -26,6 +26,7 @@ func NewAddressUsecase(addressRepo repository.AddressRepository) *addressUsecase
 
 func (u *addressUsecaseImpl) CreateAddress(c context.Context, address dto.AddressRequest) (res dto.AddressResponse, err *helper.ErrorStruct) {
 	resRepo, errRepo := u.addressRepo.CreateAddress(c, daos.Alamat{
+		IdUser:       address.IdUser,
 		JudulAlamat:  address.JudulAlamat,
 		NamaPenerima: address.NamaPenerima,
 		NoTelp:       address.NoTelp,
@@ -45,6 +46,14 @@ func (u *addressUsecaseImpl) CreateAddress(c context.Context, address dto.Addres
 		NamaPenerima: resRepo.NamaPenerima,
 		NoTelp:       resRepo.NoTelp,
 		DetailAlamat: resRepo.DetailAlamat,
+		User: dto.UserResponse{
+			ID:           resRepo.User.ID,
+			Nama:         resRepo.User.Nama,
+			Email:        resRepo.User.Email,
+			NoTelp:       resRepo.User.NoTelp,
+			JenisKelamin: resRepo.User.JenisKelamin,
+			Pekerjaan:    resRepo.User.Pekerjaan,
+		},
 	}
 
 	return res, nil
@@ -78,6 +87,14 @@ func (u *addressUsecaseImpl) GetAllAddress(c context.Context, params dto.Address
 			NamaPenerima: v.NamaPenerima,
 			NoTelp:       v.NoTelp,
 			DetailAlamat: v.DetailAlamat,
+			User: dto.UserResponse{
+				ID:           v.User.ID,
+				Nama:         v.User.Nama,
+				Email:        v.User.Email,
+				NoTelp:       v.User.NoTelp,
+				JenisKelamin: v.User.JenisKelamin,
+				Pekerjaan:    v.User.Pekerjaan,
+			},
 		})
 	}
 
@@ -100,6 +117,14 @@ func (u *addressUsecaseImpl) GetAddressByID(c context.Context, id int64) (res dt
 		NamaPenerima: resRepo.NamaPenerima,
 		NoTelp:       resRepo.NoTelp,
 		DetailAlamat: resRepo.DetailAlamat,
+		User: dto.UserResponse{
+			ID:           resRepo.User.ID,
+			Nama:         resRepo.User.Nama,
+			Email:        resRepo.User.Email,
+			NoTelp:       resRepo.User.NoTelp,
+			JenisKelamin: resRepo.User.JenisKelamin,
+			Pekerjaan:    resRepo.User.Pekerjaan,
+		},
 	}
 
 	return res, nil

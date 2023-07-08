@@ -41,6 +41,7 @@ func (u *productUsecaseImpl) GetAllProducts(ctx context.Context, params ProductD
 	resRepo, errRepo := u.repo.GetAllProducts(ctx, daos.FilterProduk{
 		ID:         int64(params.ID),
 		Limit:      params.Limit,
+		Offset:     params.Page,
 		NamaProduk: params.Name,
 	})
 

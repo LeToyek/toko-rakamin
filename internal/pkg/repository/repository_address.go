@@ -27,7 +27,7 @@ func NewAddressRepository(db *gorm.DB) *addressRepositoryImpl {
 }
 
 func (r *addressRepositoryImpl) GetAllAddress(ctx context.Context, params daos.FilterAlamat) (res []daos.Alamat, err error) {
-	db := r.db
+	db := r.db.Preload("User")
 
 	structType := reflect.TypeOf(params)
 	structValue := reflect.ValueOf(params)
@@ -63,7 +63,8 @@ func (r *addressRepositoryImpl) GetAllAddress(ctx context.Context, params daos.F
 }
 
 func (r *addressRepositoryImpl) GetAddressByID(ctx context.Context, id int64) (res daos.Alamat, err error) {
-	if err := r.db.Where(&daos.Alamat{
+	db := r.db.Preload("User")
+	if err := db.Where(&daos.Alamat{
 		ID: id,
 	}).WithContext(ctx).First(&res).Error; err != nil {
 		return res, err
