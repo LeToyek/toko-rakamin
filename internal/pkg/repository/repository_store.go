@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"rakamin-final/internal/daos"
+	"rakamin-final/internal/utils"
 	"reflect"
 	"strings"
 
@@ -41,8 +42,9 @@ func (r *storeRepositoryImpl) GetAllStores(ctx context.Context, params daos.Filt
 
 		if value.Interface() != reflect.Zero(field.Type).Interface() {
 			if field.Name != "Limit" && field.Name != "Offset" {
-				whereConditions = append(whereConditions, fmt.Sprintf("%v like ?", field.Name))
-				whereValues = append(whereValues, value.Interface())
+				camelCaseName := utils.GenerateSlugCamelCase(field.Name)
+				whereConditions = append(whereConditions, fmt.Sprintf("%v like ?", camelCaseName))
+				whereValues = append(whereValues, fmt.Sprintf("%%%v%%", value.Interface()))
 			}
 		}
 	}
