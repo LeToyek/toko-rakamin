@@ -27,7 +27,7 @@ func NewStoreRepository(db *gorm.DB) *storeRepositoryImpl {
 }
 
 func (r *storeRepositoryImpl) GetAllStores(ctx context.Context, params daos.FilterToko) (res []daos.Toko, err error) {
-	db := r.db
+	db := r.db.Preload("Produks").Preload("User").Limit(params.Limit).Offset(params.Offset)
 
 	structType := reflect.TypeOf(params)
 	structValue := reflect.ValueOf(params)
