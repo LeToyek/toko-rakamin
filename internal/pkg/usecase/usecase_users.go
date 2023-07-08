@@ -130,8 +130,9 @@ func (u *usersUsecaseImpl) GetCredentialUserLogin(ctx context.Context, params us
 		NoTelp:       resRepo[0].NoTelp,
 		JenisKelamin: resRepo[0].JenisKelamin,
 		Pekerjaan:    resRepo[0].Pekerjaan,
+		IsAdmin:      resRepo[0].IsAdmin,
 	}
-	tokenString, errToken := utils.CreateJWT(strconv.FormatInt(res.ID, 10))
+	tokenString, errToken := utils.CreateJWT(strconv.FormatInt(res.ID, 10), res.IsAdmin)
 	if errToken != nil {
 		helper.Logger(currentfilepath, helper.LoggerLevelError, fmt.Sprintf("error when create token, err: %v", errToken.Error()))
 		return res, &helper.ErrorStruct{
@@ -200,6 +201,7 @@ func (u *usersUsecaseImpl) CreateUser(ctx context.Context, user userdto.UserRegi
 		NoTelp:       user.NoTelp,
 		JenisKelamin: user.JenisKelamin,
 		Pekerjaan:    user.Pekerjaan,
+		IsAdmin:      user.IsAdmin,
 	})
 	helper.Logger(currentfilepath, helper.LoggerLevelInfo, fmt.Sprintf("resRepo: %v", resRepo))
 
@@ -219,6 +221,7 @@ func (u *usersUsecaseImpl) CreateUser(ctx context.Context, user userdto.UserRegi
 		NoTelp:       resRepo.NoTelp,
 		JenisKelamin: resRepo.JenisKelamin,
 		Pekerjaan:    resRepo.Pekerjaan,
+		IsAdmin:      resRepo.IsAdmin,
 	}
 	return res, nil
 }

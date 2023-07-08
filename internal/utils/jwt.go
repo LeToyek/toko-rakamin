@@ -11,16 +11,18 @@ import (
 
 type (
 	JwtCustomClaims struct {
-		ID string `json:"id"`
+		ID      string `json:"id"`
+		IsAdmin bool   `json:"is_admin"`
 		jwt.StandardClaims
 	}
 )
 
-func CreateJWT(id string) (res string, err error) {
+func CreateJWT(id string, isAdmin bool) (res string, err error) {
 	currentfilepath := "internal/utils/jwt.go"
 	now := time.Now().UTC()
 	claims := &JwtCustomClaims{
 		id,
+		isAdmin,
 		jwt.StandardClaims{
 			ExpiresAt: now.Add(time.Hour * 24).Unix(),
 			IssuedAt:  now.Unix(),

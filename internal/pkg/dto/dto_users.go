@@ -16,6 +16,7 @@ type UserResponse struct {
 	NoTelp       string `json:"no_telp"`
 	JenisKelamin string `json:"jenis_kelamin"`
 	Pekerjaan    string `json:"pekerjaan"`
+	IsAdmin      bool   `json:"is_admin"`
 }
 
 type UserLogin struct {
@@ -33,4 +34,5 @@ type UserRegister struct {
 	Pekerjaan    string `json:"pekerjaan"`
 	IdProvinsi   string `json:"id_provinsi"`
 	IdKota       string `json:"id_kota"`
+	IsAdmin      bool   `json:"is_admin"`
 }

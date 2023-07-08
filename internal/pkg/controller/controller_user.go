@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	userDTO "rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
 	"time"
@@ -81,10 +80,6 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 		Name:    "token",
 		Value:   token,
 		Expires: time.Now().Add(time.Minute * 60),
-	})
-
-	ctx.Response().Header.VisitAllCookie(func(key, value []byte) {
-		fmt.Println("res cookieKey", string(key), "value", string(value))
 	})
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -180,7 +175,7 @@ func (u *usersControllerImpl) LogoutUser(ctx *fiber.Ctx) error {
 		Expires: time.Now().Add(-3 * time.Second),
 	})
 
-	ctx.ClearCookie("token")
+	ctx.ClearCookie()
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Logout success",

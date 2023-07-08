@@ -3,6 +3,7 @@ package handler
 import (
 	"rakamin-final/internal/infrastructure/container"
 	controller "rakamin-final/internal/pkg/controller"
+	"rakamin-final/internal/pkg/middleware"
 	repo "rakamin-final/internal/pkg/repository"
 	usecase "rakamin-final/internal/pkg/usecase"
 
@@ -10,13 +11,13 @@ import (
 )
 
 func RouteUserAccount(r fiber.Router, containerConf *container.Container) {
-	userApi := r.Group("/user")
 
 	repo := repo.NewUserRepository(containerConf.MySqlDB)
 	usecase := usecase.NewUsersUsecase(repo)
 	controller := controller.NewUsersController(usecase)
 
-	userApi.Get("/", controller.GetUsers)
+	userApi := r.Group("/user")
+	userApi.Get("/", middleware.CheckOwnUser, controller.GetUsers)
 	userApi.Post("/register", controller.RegisterUser)
 	userApi.Post("/login", controller.LoginUser)
 	userApi.Put("/edit/:id", controller.UpdateUser)
