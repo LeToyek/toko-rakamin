@@ -17,4 +17,5 @@ func HTTPRouteInit(r *fiber.App, containerConf *container.Container) {
 	route.RouteProduct(api, containerConf)
 	route.RouteAddress(api, containerConf)
 	route.RouteTrx(api, containerConf)
+	route.RouteProductPhoto(api, containerConf)
 }

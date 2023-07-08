@@ -24,7 +24,7 @@ func NewProductPhotoRepository(db *gorm.DB) *productPhotoRepositoryImpl {
 }
 
 func (r *productPhotoRepositoryImpl) GetAllProductPhotos(ctx context.Context) (res []daos.FotoProduk, err error) {
-	db := r.db
+	db := r.db.Preload("Produk")
 
 	if err := db.Where(&daos.FotoProduk{}).WithContext(ctx).Find(&res).Error; err != nil {
 		return res, err
@@ -35,7 +35,7 @@ func (r *productPhotoRepositoryImpl) GetAllProductPhotos(ctx context.Context) (r
 
 func (r *productPhotoRepositoryImpl) GetProductPhotoByID(ctx context.Context, id int64) (res daos.FotoProduk, err error) {
 
-	db := r.db
+	db := r.db.Preload("Produk")
 
 	if err := db.Where(&daos.FotoProduk{
 		ID: id,

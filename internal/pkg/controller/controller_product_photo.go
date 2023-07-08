@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
 	"strconv"
@@ -52,29 +53,31 @@ func (p *productPhotoControllerImpl) CreateProductPhoto(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(err.Code).JSON(err)
 	}
-	return c.Status(fiber.StatusCreated).JSON(res)
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": fmt.Sprintf("product photo with url %s successfully created", res.Url)})
 }
 
 func (p *productPhotoControllerImpl) UpdateProductPhoto(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
-	var productPhotoRequest dto.ProductPhotoRequest
+	var productPhotoRequest dto.ProductPhotoRequestEdit
 	if err := c.BodyParser(&productPhotoRequest); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
-	res, err := p.usecase.UpdateProductPhoto(c.Context(), int64(id), productPhotoRequest)
+	_, err := p.usecase.UpdateProductPhoto(c.Context(), int64(id), productPhotoRequest)
 	if err != nil {
 		return c.Status(err.Code).JSON(err)
 	}
-	return c.Status(fiber.StatusOK).JSON(res)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "success",
+	})
 }
 
 func (p *productPhotoControllerImpl) DeleteProductPhoto(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
-	res, err := p.usecase.DeleteProductPhoto(c.Context(), int64(id))
+	_, err := p.usecase.DeleteProductPhoto(c.Context(), int64(id))
 	if err != nil {
 		return c.Status(err.Code).JSON(err)
 	}
-	return c.Status(fiber.StatusOK).JSON(res)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": fmt.Sprintf("product photo with id %d successfully deleted", id)})
 }

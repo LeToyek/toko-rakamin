@@ -9,9 +9,16 @@ type ProductPhotoRequest struct {
 
 type ProductPhotoResponse struct {
 	ID        int64  `json:"id"`
-	IdProduk  int64  `json:"id_produk"`
 	Url       string `json:"url"`
-	Produk    ProductResponse
+	Produk    ProductResponseForPhoto
 	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
+}
+type ProductResponseForProduct struct {
+	ID  int64  `json:"id"`
+	Url string `json:"url"`
+}
+
+type ProductPhotoRequestEdit struct {
+	Url string `json:"url" validate:"required"`
 }

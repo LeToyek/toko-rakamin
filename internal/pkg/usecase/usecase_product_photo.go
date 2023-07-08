@@ -2,19 +2,21 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"rakamin-final/internal/daos"
 	"rakamin-final/internal/helper"
 	"rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/repository"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type ProductPhotoUsecase interface {
 	CreateProductPhoto(c context.Context, productPhoto dto.ProductPhotoRequest) (res dto.ProductPhotoResponse, err *helper.ErrorStruct)
 	GetAllProductPhotos(c context.Context) (res []dto.ProductPhotoResponse, err *helper.ErrorStruct)
 	GetProductPhotoByID(c context.Context, id int64) (res dto.ProductPhotoResponse, err *helper.ErrorStruct)
-	UpdateProductPhoto(c context.Context, id int64, productPhoto dto.ProductPhotoRequest) (res dto.ProductPhotoResponse, err *helper.ErrorStruct)
+	UpdateProductPhoto(c context.Context, id int64, productPhoto dto.ProductPhotoRequestEdit) (res dto.ProductPhotoResponse, err *helper.ErrorStruct)
 	DeleteProductPhoto(c context.Context, id int64) (res dto.ProductPhotoResponse, err *helper.ErrorStruct)
 }
 
@@ -62,9 +64,11 @@ func (u *productPhotoUsecaseImpl) GetAllProductPhotos(c context.Context) (res []
 	resRepo, errRepo := u.repo.GetAllProductPhotos(c)
 
 	if errRepo != nil {
-		return res, &helper.ErrorStruct{
-			Code:    fiber.StatusInternalServerError,
-			Message: errRepo,
+		if errors.Is(errRepo, gorm.ErrRecordNotFound) {
+			return res, &helper.ErrorStruct{
+				Code:    fiber.StatusNotFound,
+				Message: errors.New("data not found"),
+			}
 		}
 	}
 
@@ -72,13 +76,13 @@ func (u *productPhotoUsecaseImpl) GetAllProductPhotos(c context.Context) (res []
 		res = append(res, dto.ProductPhotoResponse{
 			ID:  v.ID,
 			Url: v.Url,
-			Produk: dto.ProductResponse{
+			Produk: dto.ProductResponseForPhoto{
 				ID:            v.Produk.ID,
 				NamaProduk:    v.Produk.NamaProduk,
-				Slug:          v.Produk.Slug,
 				HargaReseller: v.Produk.HargaReseller,
 				HargaKonsumen: v.Produk.HargaKonsumen,
 				Stok:          v.Produk.Stok,
+				Deskripsi:     v.Produk.Deskripsi,
 			},
 		})
 	}
@@ -100,20 +104,20 @@ func (u *productPhotoUsecaseImpl) GetProductPhotoByID(c context.Context, id int6
 	res = dto.ProductPhotoResponse{
 		ID:  resRepo.ID,
 		Url: resRepo.Url,
-		Produk: dto.ProductResponse{
+		Produk: dto.ProductResponseForPhoto{
 			ID:            resRepo.Produk.ID,
 			NamaProduk:    resRepo.Produk.NamaProduk,
-			Slug:          resRepo.Produk.Slug,
 			HargaReseller: resRepo.Produk.HargaReseller,
 			HargaKonsumen: resRepo.Produk.HargaKonsumen,
 			Stok:          resRepo.Produk.Stok,
+			Deskripsi:     resRepo.Produk.Deskripsi,
 		},
 	}
 
 	return res, nil
 }
 
-func (u *productPhotoUsecaseImpl) UpdateProductPhoto(c context.Context, id int64, productPhoto dto.ProductPhotoRequest) (res dto.ProductPhotoResponse, err *helper.ErrorStruct) {
+func (u *productPhotoUsecaseImpl) UpdateProductPhoto(c context.Context, id int64, productPhoto dto.ProductPhotoRequestEdit) (res dto.ProductPhotoResponse, err *helper.ErrorStruct) {
 
 	if validateErr := helper.Validate.Struct(productPhoto); validateErr != nil {
 		return res, &helper.ErrorStruct{
@@ -123,8 +127,7 @@ func (u *productPhotoUsecaseImpl) UpdateProductPhoto(c context.Context, id int64
 	}
 
 	resRepo, errRepo := u.repo.UpdateProductPhoto(c, id, daos.FotoProduk{
-		IdProduk: productPhoto.IdProduk,
-		Url:      productPhoto.Url,
+		Url: productPhoto.Url,
 	})
 
 	if errRepo != nil {

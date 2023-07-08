@@ -15,11 +15,12 @@ func RouteProductPhoto(r fiber.Router, container *container.Container) {
 	usecase := usecase.NewProductPhotoUsecase(repository)
 	controller := controller.NewProductPhotoController(usecase)
 
-	r.Group("/product-photo")
-	r.Get("/", middleware.DeserializeUser, controller.GetAllProductPhotos)
-	r.Post("/create", middleware.DeserializeUser, controller.CreateProductPhoto)
-	r.Get("/:id", middleware.DeserializeUser, controller.GetProductPhotoByID)
-	r.Put("/edit/:id", middleware.DeserializeUser, controller.UpdateProductPhoto)
-	r.Delete("/delete/:id", middleware.DeserializeUser, controller.DeleteProductPhoto)
+	productPhotoApi := r.Group("/product-photo")
+
+	productPhotoApi.Get("/", middleware.DeserializeUser, controller.GetAllProductPhotos)
+	productPhotoApi.Post("/create", middleware.DeserializeUser, controller.CreateProductPhoto)
+	productPhotoApi.Get("/:id", middleware.DeserializeUser, controller.GetProductPhotoByID)
+	productPhotoApi.Put("/edit/:id", middleware.DeserializeUser, controller.UpdateProductPhoto)
+	productPhotoApi.Delete("/delete/:id", middleware.DeserializeUser, controller.DeleteProductPhoto)
 
 }
