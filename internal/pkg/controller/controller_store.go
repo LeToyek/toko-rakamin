@@ -57,9 +57,16 @@ func (u *storeControllerImpl) CreateStore(ctx *fiber.Ctx) error {
 func (u *storeControllerImpl) GetAllStores(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 
-	res, err := u.usecase.GetAllStores(c, dto.StoreFilter{})
+	limit := ctx.QueryInt("limit", 10)
+	page := ctx.QueryInt("page", 1)
+	name := ctx.Query("name", "")
 
-	fmt.Println(`workk`)
+	res, err := u.usecase.GetAllStores(c, dto.StoreFilter{
+		Limit: limit,
+		Page:  page,
+		Name:  name,
+	})
+
 	if err != nil {
 		fmt.Println(err)
 		return ctx.Status(err.Code).JSON(fiber.Map{

@@ -16,7 +16,8 @@ type StoreResponse struct {
 	UrlFoto   string
 	UpdatedAt time.Time
 	CreatedAt time.Time
-	// Produks    []Produk    `json:"foreignKey:IdToko"`
+	User      UserResponse
+	// Produks   []ProductResponseForStore `json:"foreignKey:IdToko"`
 	// LogProduks []LogProduk `json:"foreignKey:IdToko"`
 	// DetailTrxs []DetailTrx `json:"foreignKey:IdToko"`
 }

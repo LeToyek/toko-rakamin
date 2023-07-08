@@ -42,6 +42,7 @@ func (u *storeUsecaseImpl) GetAllStores(ctx context.Context, params storeDTO.Sto
 	resRepo, errRepo := u.repo.GetAllStores(ctx, daos.FilterToko{
 		ID:       int64(params.ID),
 		Limit:    params.Limit,
+		Offset:   params.Page,
 		NamaToko: params.Name,
 	})
 
@@ -51,6 +52,7 @@ func (u *storeUsecaseImpl) GetAllStores(ctx context.Context, params storeDTO.Sto
 			Message: errors.New("data not found"),
 		}
 	}
+
 	for _, v := range resRepo {
 		res = append(res, storeDTO.StoreResponse{
 			ID:        v.ID,
@@ -58,6 +60,14 @@ func (u *storeUsecaseImpl) GetAllStores(ctx context.Context, params storeDTO.Sto
 			UrlFoto:   v.UrlFoto,
 			UpdatedAt: v.UpdatedAt,
 			CreatedAt: v.CreatedAt,
+			User: storeDTO.UserResponse{
+				ID:           v.User.ID,
+				Nama:         v.User.Nama,
+				Email:        v.User.Email,
+				NoTelp:       v.User.NoTelp,
+				JenisKelamin: v.User.JenisKelamin,
+				Pekerjaan:    v.User.Pekerjaan,
+			},
 		})
 	}
 	return res, nil
@@ -80,6 +90,14 @@ func (u *storeUsecaseImpl) GetStoreByID(ctx context.Context, id int64) (res stor
 		UrlFoto:   resRepo.UrlFoto,
 		UpdatedAt: resRepo.UpdatedAt,
 		CreatedAt: resRepo.CreatedAt,
+		User: storeDTO.UserResponse{
+			ID:           resRepo.User.ID,
+			Nama:         resRepo.User.Nama,
+			Email:        resRepo.User.Email,
+			NoTelp:       resRepo.User.NoTelp,
+			JenisKelamin: resRepo.User.JenisKelamin,
+			Pekerjaan:    resRepo.User.Pekerjaan,
+		},
 	}
 
 	return res, nil
