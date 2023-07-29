@@ -28,12 +28,14 @@ type UsersUsecase interface {
 }
 
 type usersUsecaseImpl struct {
-	repo userRepo.UsersRepository
+	repo      userRepo.UsersRepository
+	repoStore userRepo.StoreRepository
 }
 
-func NewUsersUsecase(userRepo userRepo.UsersRepository) *usersUsecaseImpl {
+func NewUsersUsecase(userRepo userRepo.UsersRepository, storeRepo userRepo.StoreRepository) *usersUsecaseImpl {
 	return &usersUsecaseImpl{
-		repo: userRepo,
+		repo:      userRepo,
+		repoStore: storeRepo,
 	}
 }
 
@@ -95,6 +97,7 @@ func (u *usersUsecaseImpl) GetCredentialUserLogin(ctx context.Context, params us
 	resRepo, errRepo := u.repo.GetAllUsers(ctx, daos.FilterUser{
 		Email: params.Email,
 	})
+
 	if len(resRepo) == 0 {
 		return res, &helper.ErrorStruct{
 			Code:    fiber.StatusBadRequest,
@@ -132,6 +135,22 @@ func (u *usersUsecaseImpl) GetCredentialUserLogin(ctx context.Context, params us
 		Pekerjaan:    resRepo[0].Pekerjaan,
 		IsAdmin:      resRepo[0].IsAdmin,
 	}
+	// -- get error with this stuff --
+	// resStore, errStore := u.repoStore.GetAllStores(ctx, daos.FilterToko{
+	// 	IdUser: resRepo[0].ID,
+	// })
+	// if errStore != nil {
+	// 	helper.Logger(currentfilepath, helper.LoggerLevelError, fmt.Sprintf("error when get all stores, err: %v", errStore.Error()))
+	// 	return res, &helper.ErrorStruct{
+	// 		Code:    fiber.StatusInternalServerError,
+	// 		Message: errStore,
+	// 	}, token
+	// }
+	// if len(resStore) > 0 {
+	// 	newCtx := context.WithValue(ctx, "store_id", resStore[0].ID)
+	// 	fmt.Println("newCtx", newCtx.Value("store_id"))
+	// }
+
 	tokenString, errToken := utils.CreateJWT(strconv.FormatInt(res.ID, 10), res.IsAdmin)
 	if errToken != nil {
 		helper.Logger(currentfilepath, helper.LoggerLevelError, fmt.Sprintf("error when create token, err: %v", errToken.Error()))
