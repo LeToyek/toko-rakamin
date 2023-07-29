@@ -44,6 +44,7 @@ func (u *storeUsecaseImpl) GetAllStores(ctx context.Context, params storeDTO.Sto
 		Limit:    params.Limit,
 		Offset:   params.Page,
 		NamaToko: params.Name,
+		IdUser:   int64(params.UserID),
 	})
 
 	if errors.Is(errRepo, gorm.ErrRecordNotFound) {
