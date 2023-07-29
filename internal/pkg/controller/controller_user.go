@@ -3,6 +3,7 @@ package controller
 import (
 	userDTO "rakamin-final/internal/pkg/dto"
 	"rakamin-final/internal/pkg/usecase"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -92,15 +93,15 @@ func (u *usersControllerImpl) LoginUser(ctx *fiber.Ctx) error {
 func (u *usersControllerImpl) GetUsers(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 
-	params := new(userDTO.UserFilter)
+	limit := ctx.QueryInt("limit", 10)
+	page := ctx.QueryInt("page", 1)
+	name := ctx.Query("name", "")
 
-	if err := ctx.QueryParser(params); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": err.Error(),
-		})
-	}
-
-	res, err := u.usecase.GetAllUsers(c, *params)
+	res, err := u.usecase.GetAllUsers(c, userDTO.UserFilter{
+		Limit: limit,
+		Page:  page,
+		Name:  name,
+	})
 
 	if err != nil {
 		return ctx.Status(err.Code).JSON(fiber.Map{
@@ -117,7 +118,13 @@ func (u *usersControllerImpl) GetUsers(ctx *fiber.Ctx) error {
 func (u *usersControllerImpl) UpdateUser(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 
-	EXAMPLE_PARAM := 1
+	param, resErr := strconv.Atoi(ctx.Params("id"))
+
+	if resErr != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": resErr.Error(),
+		})
+	}
 
 	var user userDTO.UserRegister
 
@@ -127,7 +134,7 @@ func (u *usersControllerImpl) UpdateUser(ctx *fiber.Ctx) error {
 		})
 	}
 
-	res, err := u.usecase.UpdateUser(c, int64(EXAMPLE_PARAM), userDTO.UserRegister{
+	res, err := u.usecase.UpdateUser(c, int64(param), userDTO.UserRegister{
 		Nama:         user.Nama,
 		NoTelp:       user.NoTelp,
 		JenisKelamin: user.JenisKelamin,
