@@ -3,10 +3,11 @@ package dto
 import "time"
 
 type StoreFilter struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Limit int    `json:"limit"`
-	Page  int    `json:"page"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Limit  int    `json:"limit"`
+	Page   int    `json:"page"`
+	UserID int64  `json:"user_id"`
 }
 
 type StoreResponse struct {
