@@ -2,6 +2,7 @@ package controller
 
 import (
 	"rakamin-final/internal/pkg/dto"
+	"rakamin-final/internal/pkg/middleware"
 	"rakamin-final/internal/pkg/usecase"
 	"strconv"
 
@@ -37,6 +38,12 @@ func (u *productControllerImpl) CreateProduct(ctx *fiber.Ctx) error {
 		})
 	}
 
+	if err := middleware.CheckOwnStoreParticle(ctx, product.TokoID); err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized",
+		})
+	}
+
 	res, err := u.usecase.CreateProduct(c, product)
 
 	if err != nil {
@@ -56,7 +63,15 @@ func (u *productControllerImpl) CreateProduct(ctx *fiber.Ctx) error {
 func (u *productControllerImpl) GetAllProducts(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 
-	res, err := u.usecase.GetAllProducts(c, dto.ProductFilter{})
+	limit := ctx.QueryInt("limit", 10)
+	page := ctx.QueryInt("page", 1)
+	name := ctx.Query("name", "")
+
+	res, err := u.usecase.GetAllProducts(c, dto.ProductFilter{
+		Page:  page,
+		Limit: limit,
+		Name:  name,
+	})
 
 	if err != nil {
 		return ctx.Status(err.Code).JSON(fiber.Map{
@@ -99,6 +114,11 @@ func (u *productControllerImpl) UpdateProduct(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(&product); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
+		})
+	}
+	if err := middleware.CheckOwnStoreParticle(ctx, product.TokoID); err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized",
 		})
 	}
 

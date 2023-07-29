@@ -61,11 +61,21 @@ func (u *storeControllerImpl) GetAllStores(ctx *fiber.Ctx) error {
 	page := ctx.QueryInt("page", 1)
 	name := ctx.Query("name", "")
 
+	resLocal := ctx.Locals("user_id").(string)
+	userID, errLocal := strconv.Atoi(resLocal)
+	if errLocal != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": errLocal.Error(),
+		})
+	}
+
 	res, err := u.usecase.GetAllStores(c, dto.StoreFilter{
-		Limit: limit,
-		Page:  page,
-		Name:  name,
+		Limit:  limit,
+		Page:   page,
+		Name:   name,
+		UserID: int64(userID),
 	})
+	ctx.Locals("store_id", res[0].ID)
 
 	if err != nil {
 		fmt.Println(err)
