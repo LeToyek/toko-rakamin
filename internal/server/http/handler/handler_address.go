@@ -2,9 +2,9 @@ package handler
 
 import (
 	"rakamin-final/internal/infrastructure/container"
-	"rakamin-final/internal/pkg/middleware"
 
 	controller "rakamin-final/internal/pkg/controller"
+	"rakamin-final/internal/pkg/middleware"
 	repo "rakamin-final/internal/pkg/repository"
 	usecase "rakamin-final/internal/pkg/usecase"
 
@@ -18,8 +18,10 @@ func RouteAddress(r fiber.Router, container *container.Container) {
 	usecase := usecase.NewAddressUsecase(repo)
 	controller := controller.NewAddressController(usecase)
 
-	addressApi.Delete("/delete/:id", middleware.DeserializeUser, controller.DeleteAddress)
-	addressApi.Post("/create", middleware.DeserializeUser, controller.CreateAddress)
-	addressApi.Get("/:id", middleware.DeserializeUser, controller.GetAddress)
-	addressApi.Put("/edit/:id", middleware.DeserializeUser, controller.UpdateAddress)
+	addressApi.Use(middleware.DeserializeUser)
+
+	addressApi.Delete("/delete/:id", controller.DeleteAddress)
+	addressApi.Post("/create", controller.CreateAddress)
+	addressApi.Get("/:id", controller.GetAddress)
+	addressApi.Put("/edit/:id", controller.UpdateAddress)
 }

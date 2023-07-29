@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -46,6 +45,9 @@ func DeserializeUser(c *fiber.Ctx) error {
 			"message": "Unauthorized",
 		})
 	}
-	fmt.Println(claims)
+
+	c.Locals("user_id", claims["id"])
+	c.Locals("store_id", claims["id"])
+
 	return c.Next()
 }

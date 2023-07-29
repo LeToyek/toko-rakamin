@@ -16,11 +16,11 @@ func RouteStore(r fiber.Router, containerConf *container.Container) {
 	usecase := usecase.NewStoreUsecase(repo)
 	controller := controller.NewStoreController(usecase)
 
-	storeAPI := r.Group("/store")
+	storeAPI := r.Group("/store").Use(middleware.DeserializeUser)
 
-	storeAPI.Get("/", middleware.DeserializeUser, controller.GetAllStores)
-	storeAPI.Get("/:id", middleware.DeserializeUser, controller.GetStoreByID)
-	storeAPI.Post("/", middleware.DeserializeUser, controller.CreateStore)
-	storeAPI.Put("/:id", middleware.DeserializeUser, controller.UpdateStore)
-	storeAPI.Delete("/:id", middleware.DeserializeUser, controller.DeleteStore)
+	storeAPI.Get("/", controller.GetAllStores)
+	storeAPI.Get("/:id", middleware.CheckOwnStore, controller.GetStoreByID)
+	// storeAPI.Post("/", controller.CreateStore)
+	storeAPI.Put("/:id", middleware.CheckOwnStore, controller.UpdateStore)
+	storeAPI.Delete("/:id", middleware.CheckOwnStore, controller.DeleteStore)
 }

@@ -11,15 +11,16 @@ import (
 )
 
 func RouteProduct(r fiber.Router, containerConf *container.Container) {
-	productApi := r.Group("/product")
+	productApi := r.Group("/product").Use(middleware.DeserializeUser)
 
-	repo := repo.NewProductRepository(containerConf.MySqlDB)
-	usecase := usecase.NewProductUsecase(repo)
+	repoProduct := repo.NewProductRepository(containerConf.MySqlDB)
+	repoLog := repo.NewLogProductRepository(containerConf.MySqlDB)
+	usecase := usecase.NewProductUsecase(repoProduct, repoLog)
 	controller := controller.NewProductController(usecase)
 
-	productApi.Get("/", middleware.DeserializeUser, controller.GetAllProducts)
-	productApi.Post("/create", middleware.DeserializeUser, controller.CreateProduct)
-	productApi.Get("/:id", middleware.DeserializeUser, controller.GetProductByID)
-	productApi.Put("/edit/:id", middleware.DeserializeUser, controller.UpdateProduct)
-	productApi.Delete("/delete/:id", middleware.DeserializeUser, controller.DeleteProduct)
+	productApi.Get("/", controller.GetAllProducts)
+	productApi.Post("/create", controller.CreateProduct)
+	productApi.Get("/:id", controller.GetProductByID)
+	productApi.Put("/edit/:id", controller.UpdateProduct)
+	productApi.Delete("/delete/:id", controller.DeleteProduct)
 }
