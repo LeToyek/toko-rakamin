@@ -43,12 +43,45 @@ func (p *productPhotoControllerImpl) GetProductPhotoByID(c *fiber.Ctx) error {
 }
 
 func (p *productPhotoControllerImpl) CreateProductPhoto(c *fiber.Ctx) error {
-	var productPhotoRequest dto.ProductPhotoRequest
-	if err := c.BodyParser(&productPhotoRequest); err != nil {
+	file, errFile := c.FormFile("fileUpload")
+	if errFile != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": err.Error(),
+			"message": errFile.Error(),
 		})
 	}
+	if errFile != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": errFile.Error(),
+		})
+	}
+	c.SaveFile(file, fmt.Sprintf("./public/uploads/%s", file.Filename))
+
+	src, errFile := file.Open()
+	if errFile != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": errFile.Error(),
+		})
+	}
+	defer src.Close()
+
+	// if _, errFile = io.Copy(dst, src); errFile != nil {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": errFile.Error(),
+	// 	})
+	// }
+
+	param, errParam := strconv.Atoi(c.Params("id"))
+	if errParam != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": errParam.Error(),
+		})
+	}
+
+	productPhotoRequest := dto.ProductPhotoRequest{
+		IdProduk: int64(param),
+		Url:      file.Filename,
+	}
+
 	res, err := p.usecase.CreateProductPhoto(c.Context(), productPhotoRequest)
 	if err != nil {
 		return c.Status(err.Code).JSON(err)
