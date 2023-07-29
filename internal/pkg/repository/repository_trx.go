@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"rakamin-final/internal/daos"
+	"rakamin-final/internal/utils"
 	"reflect"
 	"strings"
 
@@ -13,7 +14,7 @@ import (
 type TrxRepository interface {
 	GetAllTrxes(ctx context.Context, params daos.FilterTrx) (res []daos.Trx, err error)
 	GetTrxByID(ctx context.Context, id int64) (res daos.Trx, err error)
-	CreateTrx(ctx context.Context, trx daos.Trx) (res daos.Trx, err error)
+	CreateTrx(ctx context.Context, trx daos.Trx, detailTrxes []daos.DetailTrx) (res daos.Trx, err error)
 	UpdateTrx(ctx context.Context, id int64, trx daos.Trx) (res daos.Trx, err error)
 	DeleteTrx(ctx context.Context, id int64) error
 }
@@ -27,7 +28,7 @@ func NewTrxRepository(db *gorm.DB) *trxRepositoryImpl {
 }
 
 func (r *trxRepositoryImpl) GetAllTrxes(ctx context.Context, params daos.FilterTrx) (res []daos.Trx, err error) {
-	db := r.db
+	db := r.db.Preload("DetailTrxes").Preload("DetailTrxes.Produk").Preload("Alamat").Preload("Alamat.User").Preload("Toko").Preload("Toko.User").Limit(params.Limit).Offset(params.Offset)
 
 	structType := reflect.TypeOf(params)
 	structValue := reflect.ValueOf(params)
@@ -41,8 +42,9 @@ func (r *trxRepositoryImpl) GetAllTrxes(ctx context.Context, params daos.FilterT
 
 		if value.Interface() != reflect.Zero(field.Type).Interface() {
 			if field.Name != "Limit" && field.Name != "Offset" {
-				whereConditions = append(whereConditions, fmt.Sprintf("%v like ?", field.Name))
-				whereValues = append(whereValues, value.Interface())
+				camelCaseName := utils.GenerateSlugCamelCase(field.Name)
+				whereConditions = append(whereConditions, fmt.Sprintf("%v like ?", camelCaseName))
+				whereValues = append(whereValues, fmt.Sprintf("%%%v%%", value.Interface()))
 			}
 		}
 	}
@@ -58,12 +60,12 @@ func (r *trxRepositoryImpl) GetAllTrxes(ctx context.Context, params daos.FilterT
 			return res, err
 		}
 	}
-
 	return res, nil
 }
 
 func (r *trxRepositoryImpl) GetTrxByID(ctx context.Context, id int64) (res daos.Trx, err error) {
-	if err := r.db.Where(&daos.Trx{
+	db := r.db.Preload("DetailTrxes").Preload("DetailTrxes.Produk").Preload("Alamat").Preload("Alamat.User").Preload("Toko").Preload("Toko.User")
+	if err := db.Where(&daos.Trx{
 		ID: id,
 	}).WithContext(ctx).First(&res).Error; err != nil {
 		return res, err
@@ -72,12 +74,24 @@ func (r *trxRepositoryImpl) GetTrxByID(ctx context.Context, id int64) (res daos.
 	return res, nil
 }
 
-func (r *trxRepositoryImpl) CreateTrx(ctx context.Context, trx daos.Trx) (res daos.Trx, err error) {
-	if err := r.db.Create(&trx).WithContext(ctx).Error; err != nil {
-		return res, err
-	}
+func (r *trxRepositoryImpl) CreateTrx(ctx context.Context, trx daos.Trx, detailTrxes []daos.DetailTrx) (res daos.Trx, err error) {
+	db := r.db.Preload("DetailTrxes").Preload("DetailTrxes.Produk").Preload("Alamat").Preload("Alamat.User").Preload("Toko").Preload("Toko.User")
+	err = db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&trx).WithContext(ctx).Error; err != nil {
+			return err
+		}
+		for _, detailTrx := range detailTrxes {
+			detailTrx.IdTrx = trx.ID
+			if err := tx.Create(&detailTrx).WithContext(ctx).Error; err != nil {
+				return err
+			}
+		}
+		return err
+	})
 
-	return trx, nil
+	res = trx
+
+	return res, nil
 }
 
 func (r *trxRepositoryImpl) UpdateTrx(ctx context.Context, id int64, trx daos.Trx) (res daos.Trx, err error) {
