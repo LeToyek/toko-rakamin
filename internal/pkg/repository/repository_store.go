@@ -36,6 +36,8 @@ func (r *storeRepositoryImpl) GetAllStores(ctx context.Context, params daos.Filt
 	whereConditions := make([]string, 0)
 	whereValues := make([]interface{}, 0)
 
+	fmt.Print(params.IdUser)
+
 	for i := 0; i < structType.NumField(); i++ {
 		field := structType.Field(i)
 		value := structValue.Field(i)
@@ -60,12 +62,14 @@ func (r *storeRepositoryImpl) GetAllStores(ctx context.Context, params daos.Filt
 			return res, err
 		}
 	}
+	fmt.Println("res", res)
 
 	return res, nil
 }
 
 func (r *storeRepositoryImpl) GetStoreByID(ctx context.Context, id int64) (res daos.Toko, err error) {
-	if err := r.db.Where(&daos.Toko{
+	db := r.db.Preload("User")
+	if err := db.Where(&daos.Toko{
 		ID: id,
 	}).WithContext(ctx).First(&res).Error; err != nil {
 		return res, err

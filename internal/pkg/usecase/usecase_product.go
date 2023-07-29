@@ -20,12 +20,14 @@ type ProductUsecase interface {
 }
 
 type productUsecaseImpl struct {
-	repo repository.ProductRepository
+	repoProduct    repository.ProductRepository
+	repoLogProduct repository.LogProductRepository
 }
 
-func NewProductUsecase(repo repository.ProductRepository) *productUsecaseImpl {
+func NewProductUsecase(repoProduct repository.ProductRepository, repoLogProduct repository.LogProductRepository) *productUsecaseImpl {
 	return &productUsecaseImpl{
-		repo: repo,
+		repoProduct:    repoProduct,
+		repoLogProduct: repoLogProduct,
 	}
 }
 
@@ -38,7 +40,7 @@ func (u *productUsecaseImpl) GetAllProducts(ctx context.Context, params ProductD
 	} else {
 		params.Page = (params.Page - 1) * params.Limit
 	}
-	resRepo, errRepo := u.repo.GetAllProducts(ctx, daos.FilterProduk{
+	resRepo, errRepo := u.repoProduct.GetAllProducts(ctx, daos.FilterProduk{
 		ID:         int64(params.ID),
 		Limit:      params.Limit,
 		Offset:     params.Page,
@@ -88,7 +90,7 @@ func (u *productUsecaseImpl) GetAllProducts(ctx context.Context, params ProductD
 }
 
 func (u *productUsecaseImpl) GetProductByID(ctx context.Context, id int64) (res ProductDTO.ProductResponse, err *helper.ErrorStruct) {
-	resRepo, errRepo := u.repo.GetProductByID(ctx, id)
+	resRepo, errRepo := u.repoProduct.GetProductByID(ctx, id)
 	if errRepo != nil {
 		return res, &helper.ErrorStruct{
 			Code:    500,
@@ -136,7 +138,8 @@ func (u *productUsecaseImpl) CreateProduct(ctx context.Context, params ProductDT
 			Message: err,
 		}
 	}
-	resRepo, errRepo := u.repo.CreateProduct(ctx, daos.Produk{
+
+	resRepo, errRepo := u.repoProduct.CreateProduct(ctx, daos.Produk{
 		NamaProduk:    params.NamaProduk,
 		Slug:          utils.GenerateSlug(params.NamaProduk),
 		HargaReseller: params.HargaReseller,
@@ -152,6 +155,23 @@ func (u *productUsecaseImpl) CreateProduct(ctx context.Context, params ProductDT
 			Message: errRepo,
 		}
 	}
+	_, resError := u.repoLogProduct.CreateLogProduct(ctx, daos.LogProduk{
+		IdProduk:      resRepo.ID,
+		NamaProduk:    resRepo.NamaProduk,
+		Slug:          resRepo.Slug,
+		HargaReseller: resRepo.HargaReseller,
+		HargaKonsumen: resRepo.HargaKonsumen,
+		Deskripsi:     resRepo.Deskripsi,
+		IdToko:        resRepo.IdToko,
+		CategoryID:    resRepo.CategoryID,
+	})
+	if resError != nil {
+		return res, &helper.ErrorStruct{
+			Code:    500,
+			Message: resError,
+		}
+	}
+
 	res = ProductDTO.ProductResponse{
 		ID:            resRepo.ID,
 		NamaProduk:    resRepo.NamaProduk,
@@ -172,7 +192,7 @@ func (u *productUsecaseImpl) UpdateProduct(ctx context.Context, id int64, params
 			Message: err,
 		}
 	}
-	resRepo, errRepo := u.repo.UpdateProduct(ctx, id, daos.Produk{
+	resRepo, errRepo := u.repoProduct.UpdateProduct(ctx, id, daos.Produk{
 		NamaProduk:    params.NamaProduk,
 		Slug:          utils.GenerateSlug(params.NamaProduk),
 		HargaReseller: params.HargaReseller,
@@ -182,6 +202,23 @@ func (u *productUsecaseImpl) UpdateProduct(ctx context.Context, id int64, params
 		IdToko:        params.TokoID,
 		CategoryID:    params.CategoryID,
 	})
+	_, resError := u.repoLogProduct.CreateLogProduct(ctx, daos.LogProduk{
+		IdProduk:      resRepo.ID,
+		NamaProduk:    resRepo.NamaProduk,
+		Slug:          resRepo.Slug,
+		HargaReseller: resRepo.HargaReseller,
+		HargaKonsumen: resRepo.HargaKonsumen,
+		Deskripsi:     resRepo.Deskripsi,
+		IdToko:        resRepo.IdToko,
+		CategoryID:    resRepo.CategoryID,
+	})
+	if resError != nil {
+		return res, &helper.ErrorStruct{
+			Code:    500,
+			Message: resError,
+		}
+	}
+
 	if errRepo != nil {
 		return res, &helper.ErrorStruct{
 			Code:    500,
@@ -202,7 +239,7 @@ func (u *productUsecaseImpl) UpdateProduct(ctx context.Context, id int64, params
 }
 
 func (u *productUsecaseImpl) DeleteProduct(ctx context.Context, id int64) *helper.ErrorStruct {
-	errRepo := u.repo.DeleteProduct(ctx, id)
+	errRepo := u.repoProduct.DeleteProduct(ctx, id)
 	if errRepo != nil {
 		return &helper.ErrorStruct{
 			Code:    500,
