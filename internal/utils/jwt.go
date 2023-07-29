@@ -5,6 +5,7 @@ import (
 	"rakamin-final/internal/helper"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"github.com/spf13/viper"
 )
@@ -39,4 +40,31 @@ func CreateJWT(id string, isAdmin bool) (res string, err error) {
 	}
 
 	return tokenString, nil
+}
+
+func GetJWTCredentials(tokenString string, c *fiber.Ctx) (*JwtCustomClaims, error) {
+	tokenByte, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fiber.ErrUnauthorized
+		}
+
+		return []byte(viper.GetString("jwt_secret")), nil
+	})
+
+	if err != nil {
+		return nil, c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	claims, ok := tokenByte.Claims.(jwt.MapClaims)
+
+	if !ok || !tokenByte.Valid {
+		return nil, c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized",
+		})
+	}
+	return &JwtCustomClaims{
+		ID:      claims["id"].(string),
+		IsAdmin: claims["is_admin"].(bool),
+	}, nil
 }
