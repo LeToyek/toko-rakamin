@@ -24,5 +24,6 @@ type (
 		ID            int64
 		Limit, Offset int
 		NamaToko      string
+		IdUser        int64
 	}
 )
